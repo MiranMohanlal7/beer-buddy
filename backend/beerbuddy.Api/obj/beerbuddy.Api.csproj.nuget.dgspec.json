@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/miranmo/beer-buddy/backend/beerbuddy.Api/beerbuddy.Api.csproj": {}
+    "/Users/julesslegers/Documents/GitHub/beer-buddy/backend/beerbuddy.Api/beerbuddy.Api.csproj": {}
   },
   "projects": {
-    "/Users/miranmo/beer-buddy/backend/beerbuddy.Api/beerbuddy.Api.csproj": {
+    "/Users/julesslegers/Documents/GitHub/beer-buddy/backend/beerbuddy.Api/beerbuddy.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/miranmo/beer-buddy/backend/beerbuddy.Api/beerbuddy.Api.csproj",
+        "projectUniqueName": "/Users/julesslegers/Documents/GitHub/beer-buddy/backend/beerbuddy.Api/beerbuddy.Api.csproj",
         "projectName": "beerbuddy.Api",
-        "projectPath": "/Users/miranmo/beer-buddy/backend/beerbuddy.Api/beerbuddy.Api.csproj",
-        "packagesPath": "/Users/miranmo/.nuget/packages/",
-        "outputPath": "/Users/miranmo/beer-buddy/backend/beerbuddy.Api/obj/",
+        "projectPath": "/Users/julesslegers/Documents/GitHub/beer-buddy/backend/beerbuddy.Api/beerbuddy.Api.csproj",
+        "packagesPath": "/Users/julesslegers/.nuget/packages/",
+        "outputPath": "/Users/julesslegers/Documents/GitHub/beer-buddy/backend/beerbuddy.Api/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/miranmo/.nuget/NuGet/NuGet.Config"
+          "/Users/julesslegers/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
