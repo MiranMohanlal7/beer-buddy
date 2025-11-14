@@ -203,3 +203,4 @@
 /Users/miranmo/beer-buddy/backend/beerbuddy.Api/obj/Debug/net10.0/beerbuddy.Api.pdb
 /Users/miranmo/beer-buddy/backend/beerbuddy.Api/obj/Debug/net10.0/beerbuddy.Api.genruntimeconfig.cache
 /Users/miranmo/beer-buddy/backend/beerbuddy.Api/obj/Debug/net10.0/ref/beerbuddy.Api.dll
+/Users/miranmo/beer-buddy/backend/beerbuddy.Api/obj/Debug/net10.0/beerbuddy.Api.sourcelink.json
