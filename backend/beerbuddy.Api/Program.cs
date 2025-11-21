@@ -1,37 +1,25 @@
+using beerbuddy.Api.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Controllers (voor bv. DrinksController)
+// Connection string uit appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// DbContext registreren (MySQL via Pomelo)
+builder.Services.AddDbContext<BrewBuddyContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+// Controllers (API endpoints)
 builder.Services.AddControllers();
-
-// OpenAPI/Swagger (handig om je endpoints te testen)
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
-
-// CORS zodat je React frontend (http://localhost:5173) mag praten met de API
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy
-            .AllowAnyOrigin()   // voor nu: alles toestaan (dev only)
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
 
 var app = builder.Build();
 
-// Alleen in Development de OpenAPI UI beschikbaar maken
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi(); // .NET 8 stijl i.p.v. oude Swagger extensie
-}
-
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseAuthorization();
 
-// Koppel alle controllers (zoals /api/drinks)
+// API routes
 app.MapControllers();
 
 app.Run();
