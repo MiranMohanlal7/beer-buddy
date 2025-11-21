@@ -410,3 +410,5 @@ C:\Users\samke\Documents\GitHub\beer-buddy\backend\beerbuddy.api\obj\Debug\net10
 C:\Users\samke\Documents\GitHub\beer-buddy\backend\beerbuddy.api\obj\Debug\net10.0\beerbuddy.Api.pdb
 C:\Users\samke\Documents\GitHub\beer-buddy\backend\beerbuddy.api\obj\Debug\net10.0\beerbuddy.Api.genruntimeconfig.cache
 C:\Users\samke\Documents\GitHub\beer-buddy\backend\beerbuddy.api\obj\Debug\net10.0\ref\beerbuddy.Api.dll
+C:\Users\samke\Documents\GitHub\beer-buddy\backend\beerbuddy.api\bin\Debug\net10.0\MySqlConnector.dll
+C:\Users\samke\Documents\GitHub\beer-buddy\backend\beerbuddy.api\bin\Debug\net10.0\Pomelo.EntityFrameworkCore.MySql.dll

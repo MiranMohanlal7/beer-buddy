@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "XkBeLGl+EHE=",
+  "dgSpecHash": "vl2dlFOmNqQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\beerbuddy.Api.csproj",
+  "projectFilePath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\beerbuddy.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\samke\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\samke\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.0\\microsoft.aspnetcore.openapi.10.0.0.nupkg.sha512",
@@ -58,9 +58,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.AspNetCore.SignalR will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\beerbuddy.Api.csproj",
+      "projectPath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\beerbuddy.Api.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\beerbuddy.Api.csproj",
+      "filePath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\beerbuddy.Api.csproj",
       "libraryId": "Microsoft.AspNetCore.SignalR",
       "targetGraphs": [
         "net10.0"
@@ -70,9 +70,9 @@
       "code": "NU1608",
       "level": "Warning",
       "message": "Detected package version outside of dependency constraint: Pomelo.EntityFrameworkCore.MySql 9.0.0 requires Microsoft.EntityFrameworkCore.Relational (>= 9.0.0 && <= 9.0.999) but version Microsoft.EntityFrameworkCore.Relational 10.0.0 was resolved.",
-      "projectPath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\beerbuddy.Api.csproj",
+      "projectPath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\beerbuddy.Api.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\beerbuddy.Api.csproj",
+      "filePath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\beerbuddy.Api.csproj",
       "libraryId": "Microsoft.EntityFrameworkCore.Relational",
       "targetGraphs": [
         "net10.0"

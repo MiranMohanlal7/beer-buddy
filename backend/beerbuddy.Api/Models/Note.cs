@@ -1,14 +1,10 @@
-using System;
-using System.ComponentModel.DataAnnotations; 
-
-public class Note
+namespace beerbuddy.Api.Models
 {
-    [Key] 
-    public int id { get; set;}
-
-    public string name { get; set;}
-
-    public string message { get; set;}
-
-    public DateTime created_at { get; set;}
+    public class Note
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }     // user-entered
+        public string Message { get; set; }  // text content
+        public DateTime CreatedAt { get; set; }
+    }
 }

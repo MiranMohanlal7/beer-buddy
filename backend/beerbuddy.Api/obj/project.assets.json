@@ -3424,11 +3424,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\beerbuddy.Api.csproj",
+      "projectUniqueName": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\beerbuddy.Api.csproj",
       "projectName": "beerbuddy.Api",
-      "projectPath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\beerbuddy.Api.csproj",
+      "projectPath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\beerbuddy.Api.csproj",
       "packagesPath": "C:\\Users\\samke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\obj\\",
+      "outputPath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
