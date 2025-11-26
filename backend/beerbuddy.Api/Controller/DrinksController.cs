@@ -7,7 +7,7 @@ namespace beerbuddy.Api.Controllers;
 [Route("api/[controller]")]
 public class DrinksController : ControllerBase
 {
-    // TESTDATA (GEEN DATABASE NODIG)
+    
     private static readonly List<Drink> Drinks = new()
     {
         new Drink { Id = 1, Name = "Heineken", Quantity = 12, Threshold = 6, ImageUrl = "https://dummyimage.com/100x100/000/fff&text=Heineken" },
