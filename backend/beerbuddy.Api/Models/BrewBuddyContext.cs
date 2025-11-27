@@ -17,7 +17,8 @@ public partial class BrewBuddyContext : DbContext
     }
 
     public virtual DbSet<BeerInventory> BeerInventories { get; set; }
-
+    public virtual DbSet<SharedNote> SharedNotes { get; set; }
+ 
     public virtual DbSet<Consumption> Consumptions { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -26,6 +27,23 @@ public partial class BrewBuddyContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<SharedNote>(entity =>
+{
+    entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+    entity.ToTable("shared_notes");
+
+    entity.Property(e => e.Id).HasColumnName("id");
+    entity.Property(e => e.Name)
+        .HasMaxLength(255)
+        .HasColumnName("name");
+    entity.Property(e => e.Message)
+        .HasMaxLength(510)
+        .HasColumnName("message");
+    entity.Property(e => e.CreatedAt)
+        .HasColumnType("datetime")
+        .HasColumnName("created_at");
+});
         modelBuilder
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
