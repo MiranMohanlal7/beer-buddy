@@ -18,12 +18,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-<<<<<<< HEAD
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
-=======
 
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0" />
->>>>>>> Back-end
   </ItemGroup>
 
 </Project>

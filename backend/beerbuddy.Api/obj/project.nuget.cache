@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "n7ZbhlsYi+g=",
+  "dgSpecHash": "P5cbpa5Wwp8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.Api\\beerbuddy.Api.csproj",
+  "projectFilePath": "C:\\Users\\samke\\Documents\\GitHub\\beer-buddy\\backend\\beerbuddy.api\\beerbuddy.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\samke\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\samke\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.0\\microsoft.aspnetcore.openapi.8.0.0.nupkg.sha512",
