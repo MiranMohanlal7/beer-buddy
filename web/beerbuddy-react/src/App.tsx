@@ -1,7 +1,16 @@
-import DrinkList from "./components/DrinkList";
+import { BrowserRouter } from "react-router-dom";
+import { AppLayout } from "./components/layout/AppLayout";
+import { AppRoutes } from "./router";
 
-function App() {
-  return <DrinkList />;
+/**
+ * Root application component with routing + shared layout.
+ */
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppLayout>
+        <AppRoutes />
+      </AppLayout>
+    </BrowserRouter>
+  );
 }
-
-export default App;

@@ -1,7 +1,26 @@
+using beerbuddy.Api.Data;
+using beerbuddy.Api.Options;
+using beerbuddy.Api.Services;
+using Microsoft.EntityFrameworkCore;
+using MySql.EntityFrameworkCore.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers (voor bv. DrinksController)
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<BrewBuddyContext>(options =>
+{
+    var connectionString =
+        builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? builder.Configuration.GetConnectionString("BrewBuddy")
+        ?? throw new InvalidOperationException("Database connection string not configured.");
+
+    options.UseMySQL(connectionString);
+});
+
+builder.Services.Configure<DashboardOptions>(builder.Configuration.GetSection("Dashboard"));
+builder.Services.AddScoped<DashboardService>();
 
 // OpenAPI/Swagger (handig om je endpoints te testen)
 builder.Services.AddEndpointsApiExplorer();

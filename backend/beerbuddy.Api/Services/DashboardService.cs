@@ -92,6 +92,7 @@ public class DashboardService
                 Id = item.Id,
                 Title = item.Name,
                 Status = $"Max: {targetUnits:0} units",
+                Description = item.Description,
                 Percentage = percentage,
                 CurrentUnits = Math.Round(currentUnits, 1),
                 TargetUnits = Math.Round(targetUnits, 1),

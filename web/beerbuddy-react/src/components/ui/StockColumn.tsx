@@ -8,12 +8,20 @@ export interface StockColumnProps {
   percentage: number;
   icon?: ReactNode;
   iconName?: UiIconName;
+  meta?: string;
 }
 
 /**
  * Tall compartment card that visualises how full a fridge slot is.
  */
-export function StockColumn({ title, status, percentage, icon, iconName = "stock" }: StockColumnProps) {
+export function StockColumn({
+  title,
+  status,
+  percentage,
+  icon,
+  iconName = "stock",
+  meta,
+}: StockColumnProps) {
   const safePercentage = Math.max(0, Math.min(percentage, 100));
 
   return (
@@ -41,7 +49,7 @@ export function StockColumn({ title, status, percentage, icon, iconName = "stock
       <div className="stock-column__meta">
         <span className="stock-column__percentage">{safePercentage}% stocked</span>
         <p className="stock-column__status stock-column__status--muted">
-          Live updates arrive once sensors sync.
+          {meta ?? "Live updates arrive once sensors sync."}
         </p>
       </div>
     </article>

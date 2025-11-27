@@ -22,6 +22,7 @@ export interface CompartmentStatus {
   id: number;
   title: string;
   status: string;
+  description: string;
   percentage: number;
   currentUnits: number;
   targetUnits: number;
