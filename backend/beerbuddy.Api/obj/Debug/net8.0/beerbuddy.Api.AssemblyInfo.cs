@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("beerbuddy.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+28d93b38b45a6354cc55666aa9e3e849c28a0a4f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+724e60e52dda096d07bf76309c797bf94a1cda4c")]
 [assembly: System.Reflection.AssemblyProductAttribute("beerbuddy.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("beerbuddy.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
