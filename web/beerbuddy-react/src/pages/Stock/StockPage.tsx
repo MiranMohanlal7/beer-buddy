@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { PageHeader } from "../../components/ui/PageHeader";
 import { Card } from "../../components/ui/Card";
 import { AlertBanner } from "../../components/ui/AlertBanner";
 import { ProgressBar } from "../../components/ui/ProgressBar";
@@ -19,7 +18,6 @@ export function StockPage() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setIsLoading(true);
 
     api
       .getDashboardSummary(controller.signal)
@@ -43,7 +41,9 @@ export function StockPage() {
   const compartments = summary?.compartments ?? [];
   const overallStock = summary?.overallStockPercentage ?? 0;
   const nextTopUp = summary?.nextTopUpCompartment ?? "Awaiting data";
-  const heroSummary = summary?.heroSummary ?? (isLoading ? "Syncing live stock…" : "");
+  const heroSummary =
+    summary?.heroSummary ??
+    (isLoading ? "Syncing live stock…" : "We couldn’t load the latest fridge health yet.");
 
   const lowStockCount = useMemo(
     () => compartments.filter((slot) => slot.percentage <= 35).length,
@@ -52,13 +52,6 @@ export function StockPage() {
 
   return (
     <div className="page stock-page">
-      <PageHeader
-        title="Stock"
-        subtitle="A closer look at every compartment with live sensor data."
-      >
-        <span className="pill">{summary ? "Live" : isLoading ? "Syncing" : "Offline"}</span>
-      </PageHeader>
-
       {error ? (
         <AlertBanner
           severity="critical"
@@ -68,43 +61,47 @@ export function StockPage() {
       ) : null}
 
       <Card className="stock-hero">
-        <div className="stock-hero__copy">
-          <p className="eyebrow">Fridge pulse</p>
-          <h2>
-            {summary ? `${overallStock}% stocked` : isLoading ? "Loading stock…" : "No data yet"}
-          </h2>
-          <p className="stock-page__muted">
-            {heroSummary ||
-              "We couldn’t pull the latest status. Try again in a moment or check the sensors."}
-          </p>
+        <div className="stock-hero__top">
+          <div className="stock-hero__intro">
+            <div className="stock-hero__title-row">
+              <h2>Stock health overview</h2>
+              <span className="pill">{summary ? "Live" : isLoading ? "Syncing" : "Offline"}</span>
+            </div>
+            <p className="stock-hero__subtitle">A closer look at every compartment with live data.</p>
+            <p className="stock-page__muted">{heroSummary}</p>
+          </div>
 
-          <div className="stock-hero__stats">
-            <div className="stock-hero__stat">
-              <span className="stock-hero__stat-icon" aria-hidden="true">
-                <UiIcon name="stock" variant="active" size={18} />
-              </span>
-              <div>
-                <p className="stock-page__muted">Next top-up focus</p>
-                <strong>{nextTopUp}</strong>
-              </div>
-            </div>
-            <div className="stock-hero__stat">
-              <span className="stock-hero__stat-icon" aria-hidden="true">
-                <UiIcon name="alert" variant={lowStockCount > 0 ? "active" : "subtle"} size={18} />
-              </span>
-              <div>
-                <p className="stock-page__muted">Low compartments</p>
-                <strong>{summary ? lowStockCount : isLoading ? "…" : 0}</strong>
-              </div>
-            </div>
+          <div className="stock-hero__reading">
+            <p className="stock-hero__reading-label">Overall stock</p>
+            <p className="stock-hero__reading-value">
+              {summary ? `${overallStock}%` : isLoading ? "…" : "--"}
+            </p>
+            <ProgressBar value={overallStock} aria-label="Overall fridge stock percentage" />
+            <p className="stock-hero__reading-note">
+              Auto-sync from fridge sensors. Values refresh in real time.
+            </p>
           </div>
         </div>
 
-        <div className="stock-hero__meter">
-          <ProgressBar value={overallStock} aria-label="Overall fridge stock percentage" />
-          <p className="stock-page__muted">
-            Auto-sync from fridge sensors. Values update as soon as new weights arrive.
-          </p>
+        <div className="stock-hero__stats">
+          <div className="stock-hero__stat">
+            <span className="stock-hero__stat-icon" aria-hidden="true">
+              <UiIcon name="stock" variant="active" size={18} />
+            </span>
+            <div>
+              <p className="stock-page__muted">Next top-up focus</p>
+              <strong>{nextTopUp}</strong>
+            </div>
+          </div>
+          <div className="stock-hero__stat">
+            <span className="stock-hero__stat-icon" aria-hidden="true">
+              <UiIcon name="alert" variant={lowStockCount > 0 ? "active" : "subtle"} size={18} />
+            </span>
+            <div>
+              <p className="stock-page__muted">Low compartments</p>
+              <strong>{summary ? lowStockCount : isLoading ? "…" : 0}</strong>
+            </div>
+          </div>
         </div>
       </Card>
 
@@ -125,15 +122,15 @@ export function StockPage() {
 
         {compartments.map((slot) => {
           const safePercentage = Math.max(0, Math.min(slot.percentage, 100));
-          const estimatedValue = Math.max(0, slot.currentUnits * slot.pricePerUnit);
+          const unitsNeeded = Math.max(0, slot.targetUnits - slot.currentUnits);
+          const costToRefill = Math.max(0, unitsNeeded * slot.pricePerUnit);
+          const description = (slot.description ?? "").trim();
 
           return (
             <Card key={slot.id} className="stock-detail">
               <div className="stock-detail__header">
                 <div>
-                  <p className="eyebrow">Compartment</p>
                   <h3>{slot.title}</h3>
-                  <p className="stock-detail__status">{slot.status}</p>
                 </div>
                 <div className="stock-detail__badges">
                   <span className="pill">{`${safePercentage}% stocked`}</span>
@@ -149,12 +146,11 @@ export function StockPage() {
                   role="img"
                   aria-label={`${slot.title} ${safePercentage}% stocked`}
                 >
-                  <div className="stock-column__bar stock-detail__bar">
-                    <div className="stock-column__fill" style={{ height: `${safePercentage}%` }} />
+                  <div className="stock-detail__visual">
+                    <div className="stock-column__bar stock-detail__bar">
+                      <div className="stock-column__fill" style={{ height: `${safePercentage}%` }} />
+                    </div>
                   </div>
-                  <p className="stock-detail__meter-caption">
-                    {slot.currentUnits.toFixed(1)} / {slot.targetUnits.toFixed(1)} units
-                  </p>
                 </div>
 
                 <div className="stock-detail__content">
@@ -168,19 +164,17 @@ export function StockPage() {
                       <strong>{slot.targetUnits.toFixed(1)} units</strong>
                     </div>
                     <div className="stock-detail__metric">
-                      <span className="stock-detail__metric-label">Estimated value</span>
-                      <strong>€{estimatedValue.toFixed(2)}</strong>
-                    </div>
-                    <div className="stock-detail__metric">
-                      <span className="stock-detail__metric-label">Price</span>
-                      <strong>€{slot.pricePerUnit.toFixed(2)}</strong>
+                      <span className="stock-detail__metric-label">Cost to refill</span>
+                      <strong>€{costToRefill.toFixed(2)}</strong>
                     </div>
                   </div>
-
-                  <p className="stock-detail__description">
-                    {slot.description || "Description not available yet for this drink."}
-                  </p>
                 </div>
+
+                <p className="stock-detail__description">
+                  {description && description.length > 0
+                    ? description
+                    : "Description not available yet for this drink."}
+                </p>
               </div>
             </Card>
           );

@@ -7,7 +7,12 @@ using MySql.EntityFrameworkCore.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers (voor bv. DrinksController)
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Force camelCase so frontend gets "description" and other fields consistently.
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 
 builder.Services.AddDbContext<BrewBuddyContext>(options =>
 {
@@ -21,6 +26,7 @@ builder.Services.AddDbContext<BrewBuddyContext>(options =>
 
 builder.Services.Configure<DashboardOptions>(builder.Configuration.GetSection("Dashboard"));
 builder.Services.AddScoped<DashboardService>();
+builder.Services.AddScoped<LeaderboardService>();
 
 // OpenAPI/Swagger (handig om je endpoints te testen)
 builder.Services.AddEndpointsApiExplorer();

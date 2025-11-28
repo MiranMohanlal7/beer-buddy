@@ -1,13 +1,4 @@
-/**
- * Shared domain types for Brew Buddy dashboard.
- */
-export type DrinkCategoryId = string;
-export type UserId = string;
-
-export interface User {
-  id: UserId;
-  name: string;
-}
+export type UserId = number;
 
 export type AlertSeverity = "info" | "warning" | "critical";
 
@@ -49,4 +40,18 @@ export interface FridgeNote {
 export interface CreateNotePayload {
   author: string;
   text: string;
+}
+
+export interface DrinkBreakdown {
+  drinkId: number;
+  drinkName: string;
+  unitsTaken: number;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: UserId;
+  username: string;
+  totalUnits: number;
+  drinks: DrinkBreakdown[];
 }

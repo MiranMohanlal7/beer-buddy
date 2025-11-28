@@ -80,28 +80,28 @@ public class BrewBuddyContext(DbContextOptions<BrewBuddyContext> options) : DbCo
                 {
                     Id = 1,
                     Username = "Sam",
-                    RfidTagId = 1,
+                    RfidTagId = "1",
                     CreatedAt = DateTime.SpecifyKind(DateTime.Parse("2025-11-21T10:58:14"), DateTimeKind.Utc)
                 },
                 new UserAccount
                 {
                     Id = 2,
                     Username = "Jim",
-                    RfidTagId = 2,
+                    RfidTagId = "2",
                     CreatedAt = DateTime.SpecifyKind(DateTime.Parse("2025-11-21T10:58:24"), DateTimeKind.Utc)
                 },
                 new UserAccount
                 {
                     Id = 3,
                     Username = "Jules",
-                    RfidTagId = 3,
+                    RfidTagId = "3",
                     CreatedAt = DateTime.SpecifyKind(DateTime.Parse("2025-11-21T10:58:30"), DateTimeKind.Utc)
                 },
                 new UserAccount
                 {
                     Id = 4,
                     Username = "Miran",
-                    RfidTagId = 4,
+                    RfidTagId = "4",
                     CreatedAt = DateTime.SpecifyKind(DateTime.Parse("2025-11-21T10:58:37"), DateTimeKind.Utc)
                 });
         });

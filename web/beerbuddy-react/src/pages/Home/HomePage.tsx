@@ -6,8 +6,11 @@ import type { UiIconName } from "../../components/ui/Icon";
 import { UiIcon } from "../../components/ui/Icon";
 import { useApi } from "../../api/ApiProvider";
 import type { DashboardSummary, FridgeNote } from "../../domain/types";
+import { useSettings } from "../../state/SettingsContext";
+import { useActiveProfile, useResolvedProfileName } from "../../state/ActiveProfileContext";
 
 const noteCharacterLimit = 180;
+const DASHBOARD_REFRESH_INTERVAL_MS = 30_000;
 
 /**
  * Presents the welcome hero, conditional alerts, notes, and compartment overview backed by live data.
@@ -17,6 +20,7 @@ export function HomePage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
+  const { settings } = useSettings();
 
   const [notes, setNotes] = useState<FridgeNote[]>([]);
   const [notesError, setNotesError] = useState<string | null>(null);
@@ -25,55 +29,100 @@ export function HomePage() {
   const [noteAuthor, setNoteAuthor] = useState("");
   const [noteText, setNoteText] = useState("");
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
+  const { activeProfile, selectProfile } = useActiveProfile();
 
   useEffect(() => {
-    const controller = new AbortController();
-    setIsLoadingSummary(true);
-    api
-      .getDashboardSummary(controller.signal)
-      .then((result) => {
-        setSummary(result);
-        setSummaryError(null);
-      })
-      .catch((error: Error) => {
-        if (controller.signal.aborted) return;
-        setSummaryError(error.message ?? "Failed to load live dashboard data.");
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
+    let controller: AbortController | null = null;
+
+    const fetchSummary = async (withLoadingState = true) => {
+      controller?.abort();
+      const nextController = new AbortController();
+      controller = nextController;
+      if (withLoadingState) {
+        setIsLoadingSummary(true);
+      }
+
+      try {
+        const result = await api.getDashboardSummary(nextController.signal);
+        if (!nextController.signal.aborted) {
+          setSummary(result);
+          setSummaryError(null);
+        }
+      } catch (error) {
+        if (nextController.signal.aborted) return;
+        const message = error instanceof Error ? error.message : "Failed to load live dashboard data.";
+        setSummaryError(message);
+      } finally {
+        if (!nextController.signal.aborted && withLoadingState) {
           setIsLoadingSummary(false);
         }
-      });
+      }
+    };
 
-    return () => controller.abort();
+    void fetchSummary();
+    const intervalId = window.setInterval(() => {
+      void fetchSummary(false);
+    }, DASHBOARD_REFRESH_INTERVAL_MS);
+
+    return () => {
+      controller?.abort();
+      window.clearInterval(intervalId);
+    };
   }, [api]);
 
   useEffect(() => {
-    const controller = new AbortController();
-    setIsLoadingNotes(true);
-    api
-      .getNotes(controller.signal)
-      .then((result) => {
-        setNotes(result);
-        setNotesError(null);
-      })
-      .catch((error: Error) => {
-        if (controller.signal.aborted) return;
-        setNotesError(error.message ?? "Failed to load fridge notes.");
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
+    let controller: AbortController | null = null;
+
+    const fetchNotes = async (withLoadingState = true) => {
+      controller?.abort();
+      const nextController = new AbortController();
+      controller = nextController;
+      if (withLoadingState) {
+        setIsLoadingNotes(true);
+      }
+
+      try {
+        const result = await api.getNotes(nextController.signal);
+        if (!nextController.signal.aborted) {
+          setNotes(result);
+          setNotesError(null);
+        }
+      } catch (error) {
+        if (nextController.signal.aborted) return;
+        const message = error instanceof Error ? error.message : "Failed to load fridge notes.";
+        setNotesError(message);
+      } finally {
+        if (!nextController.signal.aborted && withLoadingState) {
           setIsLoadingNotes(false);
         }
-      });
+      }
+    };
 
-    return () => controller.abort();
+    void fetchNotes();
+    const intervalId = window.setInterval(() => {
+      void fetchNotes(false);
+    }, DASHBOARD_REFRESH_INTERVAL_MS);
+
+    return () => {
+      controller?.abort();
+      window.clearInterval(intervalId);
+    };
   }, [api]);
+
+  useEffect(() => {
+    if (!summary?.currentUserName) {
+      return;
+    }
+    if (activeProfile && activeProfile.source === "manual") {
+      return;
+    }
+    selectProfile({ username: summary.currentUserName }, "api");
+  }, [summary?.currentUserName, activeProfile, selectProfile]);
 
   const alerts = summary?.alerts ?? [];
   const compartments = summary?.compartments ?? [];
   const overallStock = summary?.overallStockPercentage ?? 0;
-  const heroName = summary?.currentUserName ?? "Fridge buddy";
+  const heroName = useResolvedProfileName(summary?.currentUserName ?? "Fridge buddy");
   const heroSummary =
     summary?.heroSummary ??
     (summaryError ? "We couldn’t load live fridge data just now." : "Fetching the latest fridge metrics…");
@@ -173,7 +222,10 @@ export function HomePage() {
   }
 
   function formatNoteTimestamp(isoDate: string) {
-    const date = new Date(isoDate);
+    const hasTimezone = /([zZ]|[+-]\d{2}:\d{2})$/.test(isoDate);
+    // Backend occasionally sends timestamps without a timezone suffix, so assume UTC when missing.
+    const normalizedDate = hasTimezone ? isoDate : `${isoDate}Z`;
+    const date = new Date(normalizedDate);
     if (Number.isNaN(date.getTime())) {
       return undefined;
     }
@@ -184,16 +236,19 @@ export function HomePage() {
       return "just now";
     }
     if (diffMinutes < 60) {
-      return `${diffMinutes} min ago`;
+      const minuteLabel = diffMinutes === 1 ? "minute" : "minutes";
+      return `${diffMinutes} ${minuteLabel} ago`;
     }
 
     const diffHours = Math.floor(diffMinutes / 60);
     if (diffHours < 24) {
-      return `${diffHours} hr${diffHours > 1 ? "s" : ""} ago`;
+      const hourLabel = diffHours === 1 ? "hour" : "hours";
+      return `${diffHours} ${hourLabel} ago`;
     }
 
     const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    const dayLabel = diffDays === 1 ? "day" : "days";
+    return `${diffDays} ${dayLabel} ago`;
   }
 
   return (
@@ -261,39 +316,41 @@ export function HomePage() {
       </Card>
 
       <div className="home-page__grid">
-        <Card className="home-panel home-panel--alerts">
-          <div className="home-panel__header">
-            <div>
-              <h2>Alerts</h2>
-              <p className="home-panel__muted">Important updates from the fridge sensors.</p>
+        {settings.showHomeMessages ? (
+          <Card className="home-panel home-panel--alerts">
+            <div className="home-panel__header">
+              <div>
+                <h2>Alerts</h2>
+                <p className="home-panel__muted">Important updates from the fridge sensors.</p>
+              </div>
+              <span className={`pill ${alerts.length > 0 ? "pill--accent" : ""}`}>
+                {alerts.length > 0 ? `${alerts.length} active` : "All clear"}
+              </span>
             </div>
-            <span className={`pill ${alerts.length > 0 ? "pill--accent" : ""}`}>
-              {alerts.length > 0 ? `${alerts.length} active` : "All clear"}
-            </span>
-          </div>
 
-          {alerts.length > 0 ? (
-            <div className="home-alerts__list home-alerts__list--card">
-              {alerts.map((alert) => (
-                <AlertBanner
-                  key={alert.id}
-                  title={alert.title}
-                  description={alert.description}
-                  severity={alert.severity}
-                />
-              ))}
+            {alerts.length > 0 ? (
+              <div className="home-alerts__list home-alerts__list--card">
+                {alerts.map((alert) => (
+                  <AlertBanner
+                    key={alert.id}
+                    title={alert.title}
+                    description={alert.description}
+                    severity={alert.severity}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="home-alerts__empty">
+                {isLoadingSummary ? "Loading alerts…" : "No alerts right now. Enjoy your evening."}
+              </p>
+            )}
+
+            <div className="home-alerts__context">
+              <p className="home-alerts__context-lead">Notification Centre</p>
+              <p className="home-alerts__context-copy">{notificationCopy}</p>
             </div>
-          ) : (
-            <p className="home-alerts__empty">
-              {isLoadingSummary ? "Loading alerts…" : "No alerts right now. Enjoy your evening."}
-            </p>
-          )}
-
-          <div className="home-alerts__context">
-            <p className="home-alerts__context-lead">Notification Centre</p>
-            <p className="home-alerts__context-copy">{notificationCopy}</p>
-          </div>
-        </Card>
+          </Card>
+        ) : null}
 
         <Card className="home-panel home-panel--summary fridge-notes-panel">
           <div className="home-panel__header">
