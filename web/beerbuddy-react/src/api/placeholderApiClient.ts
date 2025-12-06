@@ -8,6 +8,7 @@ import type {
   AlertSeverity,
   LeaderboardEntry,
   DrinkBreakdown,
+  ConsumptionEvent,
 } from "../domain/types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5151/api";
@@ -174,6 +175,29 @@ function normalizeLeaderboard(payload: unknown): LeaderboardEntry[] {
   return payload.map((entry, index) => normalizeLeaderboardEntry(entry, index));
 }
 
+function normalizeConsumptionEvent(raw: unknown, index: number): ConsumptionEvent {
+  const candidate = (raw ?? {}) as Record<string, unknown>;
+  const id = toNumber(candidate.id ?? candidate.Id, index + 1);
+  const timeTaken = toStringValue(candidate.timeTaken ?? candidate.TimeTaken, new Date().toISOString());
+
+  return {
+    id,
+    userId: toNumber(candidate.userId ?? candidate.UserId),
+    username: toStringValue(candidate.username ?? candidate.Username, "Unknown user"),
+    beerId: toNumber(candidate.beerId ?? candidate.BeerId),
+    beerName: toStringValue(candidate.beerName ?? candidate.BeerName, "Unknown drink"),
+    unitsTaken: toNumber(candidate.unitsTaken ?? candidate.UnitsTaken),
+    timeTaken,
+  };
+}
+
+function normalizeConsumptionEvents(payload: unknown): ConsumptionEvent[] {
+  if (!Array.isArray(payload)) {
+    return [];
+  }
+  return payload.map((entry, index) => normalizeConsumptionEvent(entry, index));
+}
+
 export const placeholderApiClient: BrewBuddyApi = {
   async getDashboardSummary(signal?: AbortSignal): Promise<DashboardSummary> {
     const payload = await request<unknown>("/dashboard/summary", { signal });
@@ -204,5 +228,16 @@ export const placeholderApiClient: BrewBuddyApi = {
 
     const payload = await request<unknown>(path, { signal: params?.signal });
     return normalizeLeaderboard(payload);
+  },
+
+  async getConsumptionEvents(params?: { from?: string; to?: string; signal?: AbortSignal }) {
+    const searchParams = new URLSearchParams();
+    if (params?.from) searchParams.set("from", params.from);
+    if (params?.to) searchParams.set("to", params.to);
+    const query = searchParams.toString();
+    const path = query ? `/consumption?${query}` : "/consumption";
+
+    const payload = await request<unknown>(path, { signal: params?.signal });
+    return normalizeConsumptionEvents(payload);
   },
 };

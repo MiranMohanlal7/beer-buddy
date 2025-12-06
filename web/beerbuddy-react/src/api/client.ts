@@ -3,6 +3,7 @@ import type {
   DashboardSummary,
   FridgeNote,
   LeaderboardEntry,
+  ConsumptionEvent,
 } from "../domain/types";
 
 export interface BrewBuddyApi {
@@ -13,4 +14,7 @@ export interface BrewBuddyApi {
   getLeaderboard(
     params?: { from?: string; to?: string; signal?: AbortSignal },
   ): Promise<LeaderboardEntry[]>;
+  getConsumptionEvents(
+    params?: { from?: string; to?: string; signal?: AbortSignal },
+  ): Promise<ConsumptionEvent[]>;
 }

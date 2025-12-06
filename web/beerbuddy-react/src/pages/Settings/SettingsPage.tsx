@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { Card } from "../../components/ui/Card";
 import { AlertBanner } from "../../components/ui/AlertBanner";
@@ -8,7 +8,13 @@ import type { DashboardSummary } from "../../domain/types";
 import { ToggleSwitch } from "../../components/ui/ToggleSwitch";
 
 export function SettingsPage() {
-  const { settings, setShowHomeMessages, setRestockMode, setPermission } = useSettings();
+  const {
+    settings,
+    setShowHomeMessages,
+    setRestockMode,
+    setPermission,
+    setRestockScheduleOrder,
+  } = useSettings();
   const api = useApi();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [users, setUsers] = useState<string[]>([]);
@@ -37,6 +43,32 @@ export function SettingsPage() {
   const drinks = useMemo(() => {
     return (summary?.compartments ?? []).map((slot) => slot.title);
   }, [summary]);
+
+  const scheduleOrder = useMemo(() => {
+    const stored = settings.restockScheduleOrder.filter(Boolean);
+    const uniqueStored: string[] = [];
+    stored.forEach((name) => {
+      if (!name) return;
+      if (uniqueStored.includes(name)) return;
+      uniqueStored.push(name);
+    });
+    const remainder = users.filter((user) => !uniqueStored.includes(user));
+    return [...uniqueStored, ...remainder];
+  }, [settings.restockScheduleOrder, users]);
+
+  const moveScheduleUser = useCallback(
+    (index: number, direction: -1 | 1) => {
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= scheduleOrder.length) return;
+      const nextOrder = [...scheduleOrder];
+      const [moved] = nextOrder.splice(index, 1);
+      nextOrder.splice(nextIndex, 0, moved);
+      setRestockScheduleOrder(nextOrder);
+    },
+    [scheduleOrder, setRestockScheduleOrder],
+  );
+
+  const isScheduleModeActive = settings.restockMode === "schedule";
 
   const restockModes: { value: RestockMode; label: string; description: string }[] = [
     { value: "consumption", label: "Based on consumption", description: "Assign duty to whoever drank the most this month." },
@@ -77,7 +109,7 @@ export function SettingsPage() {
               <p className="eyebrow">Restock duty</p>
               <h2>Selection method</h2>
               <p className="settings__muted">
-                Choose how to decide who restocks next. Applies across the Finance page and future features.
+                Choose how to decide who restocks next. The selected method will appear on the finance page. 
               </p>
             </div>
           </div>
@@ -103,18 +135,72 @@ export function SettingsPage() {
               </label>
             ))}
           </div>
+
+        </Card>
+
+        <Card className={`settings-card ${isScheduleModeActive ? "" : "settings-card--disabled"}`}>
+          <div className="settings-card__header">
+            <div>
+              <p className="eyebrow">Restock duty</p>
+              <h2>Schedule order</h2>
+              <p className="settings__muted">
+                Arrange the rotation for restock duty. We&apos;ll repeat the list every month.
+              </p>
+            </div>
+            {!isScheduleModeActive ? (
+              <span className="pill">Enable &ldquo;Set schedule&rdquo; to edit</span>
+            ) : null}
+          </div>
+          {users.length === 0 ? (
+            <p className="settings__muted">Waiting for the leaderboard to load…</p>
+          ) : (
+            <div className="settings-schedule">
+              <div className="settings-schedule__list" aria-disabled={!isScheduleModeActive}>
+                {scheduleOrder.map((user, index) => (
+                  <div key={`${user}-${index}`} className="settings-permission-row">
+                    <div>
+                      <p className="settings-permission__label">
+                        #{index + 1} · {user}
+                      </p>
+                      <p className="settings__muted">Order for monthly rotation</p>
+                    </div>
+                    <div className="settings-schedule__actions">
+                      <button
+                        type="button"
+                        className="btn btn--ghost"
+                        onClick={() => moveScheduleUser(index, -1)}
+                        disabled={!isScheduleModeActive || index === 0}
+                        aria-label={`Move ${user} up`}
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn--ghost"
+                        onClick={() => moveScheduleUser(index, 1)}
+                        disabled={!isScheduleModeActive || index === scheduleOrder.length - 1}
+                        aria-label={`Move ${user} down`}
+                      >
+                        ↓
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </Card>
 
         <Card className="settings-card">
           <div className="settings-card__header">
             <div>
               <p className="eyebrow">Permissions</p>
-              <h2>Drink access (Beta)</h2>
+              <h2>Drink access (Preview)</h2>
               <p className="settings__muted">
-                Prep for future access control. Assign who can take each drink. Notifications are not active yet while hardware support is in progress.
+                Drink acces is a feature that allows you to control who is allowed to take specific drinks from the fridge. If an unauthorized user takes a drink, the owner will be notified. 
               </p>
             </div>
-            <span className="pill pill--accent">Beta</span>
+            <span className="pill pill--accent">Preview</span>
           </div>
 
           {drinks.length === 0 ? (

@@ -15,47 +15,66 @@ function getTopDrinkName(entry: LeaderboardEntry): string | undefined {
 }
 
 const TOP_RANK_MESSAGES: string[] = [
-  "The fridge has very strong opinions about their love for {drink}.",
-  "Top spot, same order every time: {drink}.",
-  "Everyone else drinks {drink}. This one submits a thesis on it.",
-  "First place and probably on a first-name basis with {drink}.",
-  "If {drink} had a frequent flyer program, they’d be platinum.",
-  "The fridge light turns on and just assumes it’s time for {drink}.",
+  "Top spot, fuelled almost entirely by {drink}.",
+  "First place and on a first-name basis with {drink}.",
+  "If {drink} had loyalty points, they’d own the program.",
+  "Don't touch his {drink}, or deal with the consequences.",
+  "House champion with a very firm opinion on {drink}.",
+  "Everyone else enjoys {drink}; they built a life around it.",
   "Top of the board, bottom of the {drink} crate.",
   "{drink} is less a drink and more a personality trait here.",
-  "House champion. Also house {drink} problem.",
-  "At this point the fridge should auto-reserve {drink} for them.",
-  "The kind of {drink} history you only see in screenshots.",
-  "Everyone else “likes” {drink}. This one “is” {drink}.",
-  "First place and barely pretending it’s not because of {drink}.",
-  "The sensors roll their eyes when more {drink} goes missing.",
+  "At this point the fridge should automatically reserve a {drink} for them.",
   "Peak performance, powered entirely by {drink}.",
+  "First place and barely pretending it’s not all {drink}.",
+  "Signature move: open fridge, grab {drink}, stay on top.",
+  "Lives here, thrives here, usually holding {drink}.",
+  "owns a throne made of pure {drink}",
+  "Their calendar probably has set {drink} time blocks.",
+  "Big energy, bigger stack of finished {drink}.",
+  "wishes we had {drink} on tap.",
+  "borderline {drink} addict, and proud of it.",
 ];
 
 const HIGH_RANK_MESSAGES: string[] = [
-  "Comfortably on the podium, fuelled mostly by {drink}.",
-  "Strong {drink} form — just shy of the spotlight.",
-  "The fridge definitely recognises this {drink} order.",
-  "Close enough to first that the {drink} jokes have started.",
-  "One or two fridge raids away from the crown, all thanks to {drink}.",
-  "Sneaky contender, quietly stacking {drink} sessions.",
+  "Podium finish with a soft spot for {drink}.",
+  "Close to the crown, kept in the race by {drink}.",
+  "Strong contender: just a couple of {drink} away from first.",
+  "Fridge recognises the {drink} order before the door is open.",
   "Top-three energy with a clear bias toward {drink}.",
-  "Podium spot, absolutely loyal to {drink}.",
-  "Very serious about {drink}, slightly less serious about slowing down.",
-  "Reliable {drink} presence whenever the door opens.",
+  "Near the top thanks to good-'ol {drink}.",
+  "One solid {drink} streak away from first place.",
+  "Podium vibes: lots of {drink}, lots of consistency.",
+  "They’re the reason {drink} is always on the shopping list.",
+  "Comfortably ahead, mostly on {drink}.",
+  "Second nature: grab {drink}, check the leaderboard.",
+  "A gentle reminder to stock extra {drink} for this user.",
+  "Chasing gold with every {drink} pull.",
+  "Their {drink} count has a fan club.",
+  "Middle of the podium, heavy on {drink}.",
+  "A couple more {drink} and the crown is in reach.",
+  "Half the story this month is {drink}.",
+  "Podium seat reserved thanks to {drink}.",
 ];
 
 const MID_RANK_MESSAGES: string[] = [
-  "Middle of the board, emotionally attached to {drink}.",
-  "Balanced fridge life with a soft spot for {drink}.",
+  "Balanced fridge life with a reliable {drink} habit.",
+  "Middle lane, steady and loyal to {drink}.",
   "Shows up often enough that {drink} needs restocking now and then.",
-  "{drink} isn’t a problem yet, but the trendline has opinions.",
+  "Keeps things moderate: a few {drink}, then back to business.",
   "A calm, steady {drink} presence in the stats.",
-  "Middle-lane cruising, always making time for {drink}.",
-  "Not first, not last, firmly committed to {drink}.",
-  "The kind of {drink} history that says “I live here”.",
-  "Fridge usage: moderate. Feelings about {drink}: not moderate.",
-  "Spotted regularly at the fridge, usually near the {drink}.",
+  "Regular visits, usually ending with {drink}.",
+  "Not first, not last, but still firmly committed to {drink}.",
+  "This month reads: life, work, {drink}, repeat.",
+  "Middle of the board, comfortable with {drink}.",
+  "They grab {drink} when it counts and keep cruising.",
+  "Consistent enough that {drink} is never idle.",
+  "The fridge knows their footsteps and their {drink} choice.",
+  "Some weeks spike, some chill — {drink} is the constant.",
+  "could use a few more {drink}, but overall steady performance.",
+  "Even pacing: just enough {drink} to be known.",
+  "Their shelf? The one with {drink} missing here and there.",
+  "Steady hands, steady {drink} count.",
+  "A handful of {drink}, a handful of good times.",
 ];
 
 const LOW_RANK_MESSAGES: string[] = [
@@ -63,12 +82,21 @@ const LOW_RANK_MESSAGES: string[] = [
   "Technically a {drink} fan, just not a loud one.",
   "Just enough {drink} to show up on the radar.",
   "Low volume, good taste: {drink} in careful doses.",
-  "Knows where the {drink} lives, chooses restraint.",
+  "Knows where the {drink} lives but chooses restraint.",
   "Very relaxed relationship with {drink}.",
   "Fridge tourist with a clear {drink} preference.",
   "Blink and you’ll miss their {drink} logs.",
-  "Just warming up — {drink} is clearly the warm-up act.",
   "Staying humble on {drink} this month.",
+  "One or two {drink} runs, then back to chill mode.",
+  "The fridge remembers the occasional {drink} hello.",
+  "Not much {drink}, but enough to have a favourite.",
+  "Quiet month; {drink} politely knocked and left.",
+  "{drink} showed up, but not often enough to make noise.",
+  "taking a break, just a few {drink} this month.",
+  "Shows up for {drink} when the mood hits.",
+  "The {drink} shelf *barely* notices.",
+  "finally some self control.",
+  "Drifted by, picked up {drink}, went on with the day.",
 ];
 
 const GENERIC_MESSAGES: string[] = [
@@ -82,29 +110,46 @@ const GENERIC_MESSAGES: string[] = [
   "Hard to pin down — the fridge can’t predict the next choice.",
   "Light usage with no strong allegiance so far.",
   "Taking it slow. The board will remember this pacing later.",
+  "Mix and match month: no single drink stole the show.",
+  "Exploring flavours, keeping the stats guessing.",
+  "Variety pack energy — no stand-out favourite yet.",
+  "Plenty of browsing, light on commitment.",
+  "Sampler flight approach: one of each, please.",
+  "Every shelf gets a turn; no hero drink crowned.",
+  "Curious palette, flexible fridge routine.",
+  "Enjoys the options, resists picking a favourite.",
+  "Rotation mode on; no clear frontrunner.",
+  "Keeping the fridge on its toes with variety.",
 ];
 
 const ZERO_USAGE_MESSAGES: string[] = [
-  "Did not touch the fridge. Legendary self-control or forgot the PIN.",
-  "Possibly surviving on vibes and tap water alone.",
+  "Did not touch the fridge. Legendary self-control or just forgot their NFC tag.",
+  "somehow surviving on vibes and tap water alone.",
   "No fridge logs. Maybe they live on takeout.",
   "The only person not bullying the sensors this month.",
   "Either very healthy or very suspicious. No in-between.",
   "No visits recorded. Might be secretly running a second fridge.",
+  "No drinks taken? Carefull, they might have a personal stash.",
   "The fridge door never opened for this one.",
+  "sitting this one out, huh?",
   "Ambitious plan: let everyone else pay for the restock.",
-  "Statistically invisible. Emotionally important.",
+  "Statistically invisible.",
   "Untouched by caffeine and sugar (according to the data).",
   "Seems to know the fridge exists, chooses not to prove it.",
   "No evidence of any favourites. Or any drinks, really.",
   "Managed a full month without triggering a single sensor.",
   "True spectator mode: watching the leaderboard from the sidelines.",
-  "Fridge freeloader in theory only — zero actual logs.",
-  "Perfect score in “not it” for dish duty.",
+  "Perfect score in “not it” for restock duty.",
   "Possibly the designated driver of the household.",
-  "The calm at the bottom of the stats page.",
+  "The calm at the bottom of the page.",
   "Saved the most money by doing absolutely nothing here.",
   "Untouched stats. The fridge is still waiting for a first move.",
+  "Still loading… or just never opened the door.",
+  "Officially the quietest member of the fridge club.",
+  "Made eye contact with the fridge and walked away.",
+  "Perhaps living off tap water and good intentions.",
+  "having a stare-down with the fridge, but not opening it.",
+  "Might actually be an AI and not an actual user.",
 ];
 
 function pickMessage(
@@ -124,10 +169,11 @@ function pickMessage(
   return template.replace("{drink}", drink).replace("{total}", String(total));
 }
 
-function getPlacementMessage(entry: LeaderboardEntry): string {
+function getPlacementMessage(entry: LeaderboardEntry, offset = 0): string {
   const drinkName = getTopDrinkName(entry);
   const totalUnits = entry.totalUnits;
-  const baseSeed = entry.rank * 31 + (entry.userId ?? 0) * 17 + (drinkName?.length ?? 0);
+  const baseSeed =
+    entry.rank * 31 + (entry.userId ?? 0) * 17 + (drinkName?.length ?? 0) + offset * 101;
 
   if (totalUnits <= 0) {
     return pickMessage(
@@ -194,6 +240,7 @@ export function LeaderboardPage() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [messageSeedOffset, setMessageSeedOffset] = useState(0);
 
   const timezoneLabel = useMemo(
     () => Intl.DateTimeFormat().resolvedOptions().timeZone ?? "local time",
@@ -247,6 +294,8 @@ export function LeaderboardPage() {
     };
   }, [api, fromIso, toIso]);
 
+  const rerollMessages = () => setMessageSeedOffset((value) => (value + 1) % 10_000);
+
   return (
     <div className="page leaderboard-page">
       <Card className="leaderboard-card">
@@ -285,7 +334,19 @@ export function LeaderboardPage() {
               <div className="leaderboard__cell leaderboard__cell--label" role="columnheader">
                 Rank
               </div>
-              <div className="leaderboard__cell leaderboard__cell--label" role="columnheader">
+              <div
+                className="leaderboard__cell leaderboard__cell--label leaderboard__cell--interactive"
+                role="columnheader"
+                tabIndex={0}
+                onClick={rerollMessages}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    rerollMessages();
+                  }
+                }}
+                aria-label="User column (click to shuffle messages)"
+              >
                 User
               </div>
               <div className="leaderboard__cell leaderboard__cell--label leaderboard__cell--align-right" role="columnheader">
@@ -304,7 +365,9 @@ export function LeaderboardPage() {
                 </div>
               <div className="leaderboard__cell leaderboard__user" role="cell">
                 <strong>{entry.username}</strong>
-                  <p className="leaderboard__breakdown-hint">{getPlacementMessage(entry)}</p>
+                  <p className="leaderboard__breakdown-hint">
+                    {getPlacementMessage(entry, messageSeedOffset)}
+                  </p>
               </div>
                 <div className="leaderboard__cell leaderboard__cell--align-right" role="cell">
                   <div className="leaderboard__total-wrapper">

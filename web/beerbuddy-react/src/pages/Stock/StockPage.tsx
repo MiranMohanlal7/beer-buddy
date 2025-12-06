@@ -64,7 +64,7 @@ export function StockPage() {
         <div className="stock-hero__top">
           <div className="stock-hero__intro">
             <div className="stock-hero__title-row">
-              <h2>Stock health overview</h2>
+              <h2>Detailled Stock overview</h2>
               <span className="pill">{summary ? "Live" : isLoading ? "Syncing" : "Offline"}</span>
             </div>
             <p className="stock-hero__subtitle">A closer look at every compartment with live data.</p>

@@ -55,3 +55,35 @@ export interface LeaderboardEntry {
   totalUnits: number;
   drinks: DrinkBreakdown[];
 }
+
+export interface ConsumptionEvent {
+  id: number;
+  userId: UserId;
+  username: string;
+  beerId: number;
+  beerName: string;
+  unitsTaken: number;
+  timeTaken: string;
+}
+
+export type TransactionType = "added" | "removed" | "adjustment";
+
+export interface CompartmentTransaction {
+  id: string;
+  compartmentId: number;
+  compartmentName: string;
+  type: TransactionType;
+  units: number;
+  timestamp: string;
+  source?: string;
+  note?: string;
+}
+
+export interface CompartmentHistory {
+  compartmentId: number;
+  compartmentName: string;
+  currentUnits: number;
+  targetUnits: number;
+  pricePerUnit: number;
+  transactions: CompartmentTransaction[];
+}

@@ -59,4 +59,13 @@ app.UseCors();
 // Koppel alle controllers (zoals /api/drinks)
 app.MapControllers();
 
+// Provide a simple root endpoint so hitting "/" returns a friendly message. This helps verify the API is up.
+app.MapGet("/", () =>
+{
+    var message = app.Environment.IsDevelopment()
+        ? "Beerbuddy API is running. Browse /swagger/index.html to explore the OpenAPI UI."
+        : "Beerbuddy API is running.";
+    return Results.Ok(new { message });
+});
+
 app.Run();

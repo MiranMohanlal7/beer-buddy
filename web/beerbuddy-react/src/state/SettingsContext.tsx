@@ -6,6 +6,7 @@ export type RestockMode = "consumption" | "schedule" | "wheel";
 export interface BrewBuddySettings {
   showHomeMessages: boolean;
   restockMode: RestockMode;
+  restockScheduleOrder: string[];
   permissions: Record<string, string>;
 }
 
@@ -14,13 +15,15 @@ interface SettingsContextValue {
   setShowHomeMessages: (value: boolean) => void;
   setRestockMode: (mode: RestockMode) => void;
   setPermission: (drinkName: string, value: string) => void;
+  setRestockScheduleOrder: (order: string[]) => void;
 }
 
 const STORAGE_KEY = "brew-buddy-settings";
 
 const defaultSettings: BrewBuddySettings = {
   showHomeMessages: true,
-  restockMode: "consumption",
+  restockMode: "wheel",
+  restockScheduleOrder: [],
   permissions: {},
 };
 
@@ -34,6 +37,9 @@ function loadSettings(): BrewBuddySettings {
     return {
       ...defaultSettings,
       ...parsed,
+      restockScheduleOrder: Array.isArray(parsed.restockScheduleOrder)
+        ? parsed.restockScheduleOrder.filter((name): name is string => typeof name === "string")
+        : [],
       permissions: parsed.permissions ?? {},
     };
   } catch {
@@ -42,11 +48,7 @@ function loadSettings(): BrewBuddySettings {
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useState<BrewBuddySettings>(defaultSettings);
-
-  useEffect(() => {
-    setSettings(loadSettings());
-  }, []);
+  const [settings, setSettings] = useState<BrewBuddySettings>(() => loadSettings());
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
@@ -67,9 +69,22 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const setRestockScheduleOrder = useCallback((order: string[]) => {
+    setSettings((prev) => ({
+      ...prev,
+      restockScheduleOrder: order,
+    }));
+  }, []);
+
   const value = useMemo(
-    () => ({ settings, setShowHomeMessages, setRestockMode, setPermission }),
-    [settings, setShowHomeMessages, setRestockMode, setPermission],
+    () => ({
+      settings,
+      setShowHomeMessages,
+      setRestockMode,
+      setPermission,
+      setRestockScheduleOrder,
+    }),
+    [settings, setShowHomeMessages, setRestockMode, setPermission, setRestockScheduleOrder],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;

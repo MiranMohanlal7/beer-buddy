@@ -64,14 +64,14 @@ const heroHighlights: { id: string; label: string; value: string; icon: UiIconNa
 ];
 
 const heroAssurances = [
-  "Real Brew Buddy employees, not dumb bots.",
+  "Real Brew Buddy employees, not automated bots.",
   "EU & UK coverage for hardware replacements.",
-  "Secure billing support for all housemates.",
+  "Secure billing support for everyone.",
 ];
 
 const conciergePoints = [
-  "Hardware swaps, installs, or moving the fridge.",
-  "Payment disputes or reimbursements between roommates.",
+  "Hardware replacements, installs, or moving the fridge.",
+  "help with brew buddy software.",
   "help with connecting new sensors, NFC tags, or other technical support.",
 
 ];
@@ -110,10 +110,10 @@ export function SupportPage() {
       <Card className="support-hero">
         <div className="support-hero__copy">
           <p className="support-hero__eyebrow">We have your back</p>
-          <div className="support-hero__badge">Concierge support</div>
+        
           <h1>Support and contact</h1>
           <p className="support-hero__lead">
-            The Buddy support crew keeps an eye on hardware, fridge stock, and billing questions so
+            The Buddy support crew is available for hardware assitance, as well as billing questions and any other problems you might experience with our product. Brew buddy support is here to help, so
             you can focus on good vibes. Pick any channel, we&apos;ll jump in fast.
           </p>
           <ul className="support-hero__assurance-list">
@@ -211,7 +211,7 @@ export function SupportPage() {
             )}
           </form>
           <aside className="support-info-panel">
-            <p className="support-info-panel__title">Example concierge / support requests</p>
+            <p className="support-info-panel__title">Example support requests:</p>
             <ul>
               {conciergePoints.map((point) => (
                 <li key={point}>{point}</li>

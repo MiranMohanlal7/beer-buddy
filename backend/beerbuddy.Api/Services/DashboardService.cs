@@ -110,7 +110,17 @@ public class DashboardService
         var alerts = new List<AlertDto>();
         foreach (var compartment in compartments)
         {
-            if (compartment.Percentage <= 15)
+            if (compartment.CurrentUnits <= 0)
+            {
+                alerts.Add(new AlertDto
+                {
+                    Id = $"empty-{compartment.Id}",
+                    Title = $"{compartment.Title} is empty",
+                    Description = "No units remain—restock before the next round.",
+                    Severity = "critical"
+                });
+            }
+            else if (compartment.Percentage <= 15)
             {
                 alerts.Add(new AlertDto
                 {

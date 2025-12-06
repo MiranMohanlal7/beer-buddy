@@ -153,11 +153,52 @@ export function FinancePage() {
     [entries],
   );
 
+  const normalizeName = useCallback((value: string) => value.trim().toLowerCase(), []);
+
+  const entryKey = useCallback((entry: LeaderboardEntry) => {
+    if (entry.userId !== null && entry.userId !== undefined) {
+      return `id-${entry.userId}`;
+    }
+    return `name-${normalizeName(entry.username)}`;
+  }, [normalizeName]);
+
+  const scheduleEntries = useMemo(() => {
+    if (!entries.length) return [];
+    const desiredOrder = settings.restockScheduleOrder
+      .map((name) => normalizeName(name))
+      .filter((name) => name.length > 0);
+    if (!desiredOrder.length) return [];
+    const lookup = new Map<string, LeaderboardEntry>();
+    entries.forEach((entry) => {
+      lookup.set(normalizeName(entry.username), entry);
+    });
+    const ordered: LeaderboardEntry[] = [];
+    const seenKeys = new Set<string>();
+    desiredOrder.forEach((name) => {
+      if (!lookup.has(name)) return;
+      const entry = lookup.get(name);
+      if (!entry) return;
+      const key = entryKey(entry);
+      if (seenKeys.has(key)) return;
+      ordered.push(entry);
+      seenKeys.add(key);
+    });
+    if (ordered.length === entries.length) {
+      return ordered;
+    }
+    const remainder = entries
+      .filter((entry) => !seenKeys.has(entryKey(entry)))
+      .sort((a, b) => a.rank - b.rank);
+    return [...ordered, ...remainder];
+  }, [entries, settings.restockScheduleOrder, entryKey, normalizeName]);
+
+  const rotationEntries = scheduleEntries.length > 0 ? scheduleEntries : sortedEntries;
+
   const topEntry = sortedEntries[0];
   const runnerUp = sortedEntries[1];
 
   const scheduleRotation = useMemo(() => {
-    const rotation = [...sortedEntries];
+    const rotation = [...rotationEntries];
     if (rotation.length === 0) return null;
     const now = new Date();
     const index = now.getMonth() % rotation.length;
@@ -172,15 +213,16 @@ export function FinancePage() {
     }).format(restockDate);
 
     return { current, previous, next, dateLabel };
-  }, [sortedEntries]);
+  }, [rotationEntries]);
 
-  const lastMonthAssignee = scheduleRotation?.previous ?? sortedEntries.at(-1) ?? null;
+  const lastMonthAssignee = scheduleRotation?.previous ?? rotationEntries.at(-1) ?? null;
   const wheelParticipants = useMemo(() => {
-    if (!sortedEntries.length) return [];
-    if (!lastMonthAssignee) return sortedEntries;
-    const filtered = sortedEntries.filter((entry) => entry.userId !== lastMonthAssignee.userId);
-    return filtered.length > 0 ? filtered : sortedEntries;
-  }, [sortedEntries, lastMonthAssignee]);
+    if (!rotationEntries.length) return [];
+    if (!lastMonthAssignee) return rotationEntries;
+    const lastKey = entryKey(lastMonthAssignee);
+    const filtered = rotationEntries.filter((entry) => entryKey(entry) !== lastKey);
+    return filtered.length > 0 ? filtered : rotationEntries;
+  }, [rotationEntries, lastMonthAssignee, entryKey]);
 
   const handleSpinWheel = useCallback(() => {
     if (wheelParticipants.length === 0 || isSpinning) return;
@@ -303,7 +345,10 @@ export function FinancePage() {
             <UiIcon name="housemates" variant="active" size={28} />
           </div>
           <p className="finance-total-card__label">You&apos;ve had</p>
-          <p className="finance-total-card__primary">{isLoading ? "…" : formatUnits(totalUnits)}</p>
+          <p className="finance-total-card__primary">
+            {isLoading ? "…" : formatUnits(totalUnits)}
+          </p>
+          <p className="finance-total-card__label finance-total-card__sub">drinks</p>
           <div className="finance-total-card__divider" aria-hidden="true" />
           <p className="finance-total-card__label">You owe</p>
           <p className="finance-total-card__total">{isLoading ? "…" : formatCurrency(totalCost)}</p>
@@ -316,19 +361,10 @@ export function FinancePage() {
             <h2 className="finance-restock__title">Restock duty</h2>
             <p className="finance__muted">{modeDescription[restockMode]}</p>
             <p className="finance__muted">
-              Switch modes to preview how you want to assign the next fridge run. This toggle will move to
-              Settings later.
+              The perfect way to decide who's on restock duty for the month, without the arguments. Switch between a wheel of fortune, consumption-based assignment, or a fixed but customizable schedule in Settings.
             </p>
           </div>
 
-          <div className="finance-restock__meta">
-            <div className="finance-restock__toggle" aria-label="Restock mode" role="status">
-              <span className="finance-restock__current-mode">
-                <UiIcon name="settings" variant="active" size={18} />
-                Mode from Settings: {restockMode}
-              </span>
-            </div>
-          </div>
         </div>
 
         {restockMode === "consumption" ? (
@@ -367,7 +403,7 @@ export function FinancePage() {
               <h3 className="finance-restock__assignee">
                 {scheduleRotation?.current?.username ?? (isLoading ? "Loading…" : "—")}
               </h3>
-              <p className="finance__muted">Rotation repeats monthly. Edit order in Settings later.</p>
+              <p className="finance__muted">A standardized Rotation that repeats monthly. You can edit it in settings.</p>
             </div>
             <div className="finance-restock__panel finance-restock__panel--secondary">
               <p className="finance__muted">Last month</p>

@@ -5,7 +5,7 @@ import { StockColumn } from "../../components/ui/StockColumn";
 import type { UiIconName } from "../../components/ui/Icon";
 import { UiIcon } from "../../components/ui/Icon";
 import { useApi } from "../../api/ApiProvider";
-import type { DashboardSummary, FridgeNote } from "../../domain/types";
+import type { AlertMessage, AlertSeverity, DashboardSummary, FridgeNote } from "../../domain/types";
 import { useSettings } from "../../state/SettingsContext";
 import { useActiveProfile, useResolvedProfileName } from "../../state/ActiveProfileContext";
 
@@ -119,7 +119,7 @@ export function HomePage() {
     selectProfile({ username: summary.currentUserName }, "api");
   }, [summary?.currentUserName, activeProfile, selectProfile]);
 
-  const alerts = summary?.alerts ?? [];
+  const serverAlerts = summary?.alerts ?? [];
   const compartments = summary?.compartments ?? [];
   const overallStock = summary?.overallStockPercentage ?? 0;
   const heroName = useResolvedProfileName(summary?.currentUserName ?? "Fridge buddy");
@@ -138,6 +138,47 @@ export function HomePage() {
     );
   }, [compartments]);
 
+  const emptyCompartments = useMemo(
+    () => compartments.filter((slot) => slot.currentUnits <= 0),
+    [compartments],
+  );
+  const emptyCompartmentIds = useMemo(
+    () => new Set(emptyCompartments.map((slot) => slot.id)),
+    [emptyCompartments],
+  );
+
+  const extraEmptyAlerts = useMemo<AlertMessage[]>(() => {
+    const existingEmptyIds = new Set(
+      serverAlerts.filter((alert) => alert.id.startsWith("empty-")).map((alert) => alert.id),
+    );
+
+    return emptyCompartments
+      .filter((slot) => !existingEmptyIds.has(`empty-${slot.id}`))
+      .map((slot) => ({
+        id: `empty-${slot.id}`,
+        title: `${slot.title} is empty`,
+        description: "No units remain—restock before the next round.",
+        severity: "critical" as AlertSeverity,
+      }));
+  }, [emptyCompartments, serverAlerts]);
+
+  const displayAlerts = useMemo<AlertMessage[]>(() => {
+    const filteredAlerts = serverAlerts.filter((alert) => {
+      if (!alert.id.startsWith("critical-")) {
+        return true;
+      }
+
+      const numericId = Number(alert.id.substring("critical-".length));
+      if (!Number.isNaN(numericId) && emptyCompartmentIds.has(numericId)) {
+        return false;
+      }
+
+      return true;
+    });
+
+    return [...extraEmptyAlerts, ...filteredAlerts];
+  }, [emptyCompartmentIds, extraEmptyAlerts, serverAlerts]);
+
   const highlightCards: { title: string; value: string; description: string; icon: UiIconName }[] =
     useMemo(() => {
       const fallbackDescription = isLoadingSummary
@@ -153,10 +194,10 @@ export function HomePage() {
         },
         {
           title: "Active alerts",
-          value: summary ? `${alerts.length}` : "--",
+          value: summary ? `${displayAlerts.length}` : "--",
           description:
-            alerts.length > 0
-              ? alerts[0].description
+            displayAlerts.length > 0
+              ? displayAlerts[0].description
               : summary
                 ? "All clear. Enjoy the calm fridge vibes."
                 : fallbackDescription,
@@ -171,7 +212,7 @@ export function HomePage() {
           icon: "stock",
         },
       ];
-    }, [alerts, lowestCompartment, overallStock, summary, isLoadingSummary]);
+    }, [displayAlerts, lowestCompartment, overallStock, summary, isLoadingSummary]);
 
   const remainingCharacters = noteCharacterLimit - noteText.length;
   const fridgeMood = useMemo(() => {
@@ -300,7 +341,7 @@ export function HomePage() {
                 <span className="home-hero__highlight-icon">
                   <UiIcon
                     name={item.icon}
-                    variant={item.icon === "alert" && alerts.length > 0 ? "active" : "subtle"}
+                    variant={item.icon === "alert" && displayAlerts.length > 0 ? "active" : "subtle"}
                     size={18}
                   />
                 </span>
@@ -321,16 +362,16 @@ export function HomePage() {
             <div className="home-panel__header">
               <div>
                 <h2>Alerts</h2>
-                <p className="home-panel__muted">Important updates from the fridge sensors.</p>
+                <p className="home-panel__muted">Any important notifications will appear here:</p>
               </div>
-              <span className={`pill ${alerts.length > 0 ? "pill--accent" : ""}`}>
-                {alerts.length > 0 ? `${alerts.length} active` : "All clear"}
+              <span className={`pill ${displayAlerts.length > 0 ? "pill--accent" : ""}`}>
+                {displayAlerts.length > 0 ? `${displayAlerts.length} active` : "All clear"}
               </span>
             </div>
 
-            {alerts.length > 0 ? (
+            {displayAlerts.length > 0 ? (
               <div className="home-alerts__list home-alerts__list--card">
-                {alerts.map((alert) => (
+                {displayAlerts.map((alert) => (
                   <AlertBanner
                     key={alert.id}
                     title={alert.title}
@@ -447,7 +488,7 @@ export function HomePage() {
         <div className="home-section__header">
           <div>
             <h2>Stock Overview</h2>
-            <p className="home-panel__muted">Current compartment status.</p>
+            <p className="home-panel__muted">A quick overview of your favorite compartments: </p>
           </div>
           <span className="pill">{summary ? "Live" : "Syncing"}</span>
         </div>
